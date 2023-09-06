@@ -249,6 +249,8 @@ after that we need to run ansible-playbook -i ../inventory dynamicinstall.yaml -
   -tree
 
 to resolve any deprecation warnings go to/etc/ansible there ansible.cfg make that as deprecation_warnings=false
+
+to write customised module in ansible we can write using python 
 	
 
 
