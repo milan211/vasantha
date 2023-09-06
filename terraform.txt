@@ -1,0 +1,111 @@
+
+terraform workflow:
+there are multiple phases like init,validate,apply,plan,destroy. Terraform is an open-source infrastructure as code (IaC) tool developed by HashiCorp.
+we need to write a manifest file in hashicorp language (HCL) with .tf extension in our local machine and get initilaised in working directory using [terrfaorm init]
+command.
+terraform consists of -blocks,arguments,identifiers,comments
+
+terraform top level blocks:
+1.fundamental blocks
+	*terraform block
+		terraform {
+    # Terraform version needed to execute the manifest file
+    required_version = "~> 0.14.5"
+
+    # Terraform providers required
+    required_providers {
+      aws = {										#providers are of 3 types official,partner,community
+        version = ">= 5.1.0"
+        source = "hashicorp/aws"
+      }
+    }
+
+    # backend , state file
+    backend "s3" {
+        bucket  = ""
+        region = ""
+        key = ""
+    }
+
+    # experimental 
+    # metadata to providers 
+
+}
+
+	*resource block$$$$
+		Resource "resource type" "local name"				#arguments varies according to resource type
+		{
+			ARGUMENTS
+		}
+
+NOTE: resource block has resource creation(depends on,count,for each,lifecycle,providers,provisioneres),resource destroy,resource replacement, resource destroy and 
+recreate
+--------we use meta arguments when we want to change the behaviour of resource--------
+===we will be having state file to track our infra and we put the state file in backend
+===in console we no need to define outbound but in terraform we need to write outbound also
+
+In resource block we will create vpc,subnet,routetable,igw,security groups,ec2 machine whatever we can do in aws console
+***when creating ec2 machine user data can be defiined as script or as a function
+1.script:
+user_data = <<-EOF
+  #! /bin/bash
+  sudo yum update -y
+  sudo yum install -y httpd
+  sudo service httpd start
+  systemctl enable httpd
+  echo "<h1> Terraform depends_on </h1>" > /var/www/html/index.html
+  EOF 
+2.function:
+# user_data = file("script.sh")
+
+>>>>>>>depends_on: Elastic Ip should be created before igw created 
+resource "aws_eip" "tf_vpc_eip" {
+  instance = aws_instance.tf_ec2.id
+  vpc = true
+
+  # there should be a dependency when to create elastic ip 
+  # it should only be created after the IGW is created
+  depends_on = [ 
+    aws_internet_gateway.tf_vpc_igw
+   ]
+}
+########count and for_each cannot be used at a time
+for_each-map and for_each_set
+
+{{lifecycle}}-for resource creation and destruction
+
+sensitive input info: sensitive info cannot be seen in output but it will be there in state file  
+
+	*providers block
+
+2.variable blocks
+	*input variable block:(regular input-basics,input can be passed during terraform apply or plan,env variables,cli arguments,-var,terraform .tfvars,auto.tfvars,validation rules,-var-file,sensitive input info)
+variables can be kept in manifest files or variables.tf file, we can dynamically pass the variable name when terraform plan.
+we can replace the variable name using -var at run time eg:terrform plan -var="instance_count=2" -var="instance_type=t3.micro"
+Environment variables: export TF_VAR_instance_count=2 (works in linux and mac),in windows $env:TF_VAR_instance_count=2
+
+terraform.tfvars: by default values no need to mention in variables.tf folder. we can create multiple .tfvars files and call them using -var-file 
+eg:terraform plan -var-file="dev.tfvars"
+
+.auto.tfvars: it overwrites the terraform.tfvars file data when we run terraform plan 
+
+output variables: if we set sensitive=true in output variable it doesnt show the output directly. if u place the specific output it takes from the state file and 
+executes it
+
+local variabels:it will work within the modules it avoids repetition,define reusable values within your configuration
+
+state file is of two types local and remote state file remote state file is placed in backend here backend may be s3 or gcs or some other cloud platforms
+
+In aws s3 when we keep state file in s3 we should integrate with dynamodb table to lock the state file. in gcs by default we have a locking systemm for state file.
+
+after configuring backend in .tf file we need to do -terraform init -reconfigure
+
+*output variable block
+	*local variable block
+3.calling?reference blocks
+	*data sources block
+	*module block
+Infrastructure as a code(IAC)- 	3 types
+1.server templating
+2.Configuration management
+3.provisioner

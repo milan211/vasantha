@@ -1,0 +1,73 @@
+to initialise git -git init
+to add the files to staging area- git add
+to see status of files -git status
+to see how many files are committted-git show
+to get info about commit id,author,date,msg- git log
+from august 2022 github had stopped logging with credentials 
+instead of that use tokens
+settings-developer settings-personal access tokens
+
+fork-where u can experiment on that particular repo but there is no modification in the original repo 
+
+passwordless authentication:
+generating public and private keys
+we should go to .ssh folder where we need to genearte id_rsa and id_rsa.pub
+public key should be placed in github
+---ssh and gpg key-paste the public key
+in cli git remote set-url origin git@github.....
+git remote -v -->git push ---> without password authentication
+
+in github when we have to merge the branch --------should set protection rule on branch master because main latest code is present in master branch
+--first we need to do pull request
+--after that selected collaborators should review and appprove the request
+--then merge the branch
+
+
+tag
+whenver we nned to deploy code on to production we need umnodified code so tag is being created for upto some commits
+git tag --list
+git tag v1.0x
+if we want to send tag to remote repo
+git push origin v1.0
+we can create tag upto particular commit---git tag v1.1 commit id
+if we need to delete tag-git tag -d v1.0
+make the same on to the github git push origin :refs/tags/v1.0
+
+
+undo changes in any branch which was committed or pushed that to repository we have
+git checkout ,git revert , git reset
+git checkout- if a file saved in working area but not send to staging area and if we want to undo the changes in the file use --git checkout filename
+git reset- we made changes and committed if we want to undo the changes use this git reset
+3 types:soft reset-just remove from committed area
+	mixed reset(default)- it remove from commit,staging areas annd will be present in working area with modified changes
+	hard reset-it remove from commit,staging areas and remove code changes also
+when we wnat  to remove file from commit area--git reset --soft HEAD~1
+whenwe committed the file and pushed to github -use git revert then we will be having new extra commit i.e, 2 commits
+
+when we want to change the latest commit message -git commit --amend -m "commit msg"
+
+when we need to combine multiple commits----git rebase -i HEAD~4
+after that replace pick with 's' and if we dont want the commit msgs make them as commented and make a new commit
+history of all committed msgs lost	
+if we want modify in between commit msgs use-----git rebase -i HEAD~5
+replace pick with r where u want to modify commit msg
+
+when we need to make the commits in order that is one branch commits at one place and second branch commits at one place
+use this git rebase feature i.e, sending the commits to master branch we will get m1,m2,m3,m4,f1,f2 
+
+git stash:
+when we need modify particular files after few days till then we need to store in some place that is if we modifies some files in master branch
+ but we didnt staged or committed -those files be in backp state whenver we want
+
+we can take those files 
+infact they wont  be in the working directory also 
+if we need tobackup --git stash
+if we want to see the stash files ----------git stash list
+particular stash to open---git stash pop
+particular stash---git stash pop stash {1}
+git stash drop
+
+
+cherry-pick:
+when we need a particular file present in other branch into our branch
+git cherry-pick commit id

@@ -1,0 +1,33 @@
+to install jenkins we nned to have java 11
+after tgat install jenkins
+by default jenkins will be there in /var/lib/jenkins there u can see jobs,tools,workspace,nodes etc
+jenkins run at porrt 8080 
+in jenkins dashboard u can see new item build trigger,manage jenkins,build executors,build history,build queue
+here manage jenkins is very crucial as there will be having system,tools,plugins,nodes and clouds,credentials
+to safely restart jenkins when we installed plugins u can use safe restart plugin
+to integrate sonarqube with jenkins u can use sonarscanner plugin or modify pom.xml at properties
+to integrate nexus with jenkins u can use nexus paltform plugin or modify pom.xml and settings.xml 
+if we want to deploy plugin from outside u can download the plugin with extension .hpi file
+
+
+master slave configuration
+
+we have jenkins master vm and we created javaslave vm as a slave 
+install java11,mvn and java17  in javaslave (no need to install jenkins in slave vm as we are going to integrate)
+in java-slave useradd,passwd,vim /etc/ssh/sshd_config---password authentication=yes
+systemctl restart sshd.service
+usermod -aG wheel username
+
+
+
+
+
+
+to store artifact in nexus using declartive pipeline -plugin(nexus artifact uploder)
+to read pom.xml files we need to have plugin(pipeline utility)
+fileExists-plugin(pipeline basic steps) 
+
+
+
+directory structure of shared libraries :src,vars,resources
+ 

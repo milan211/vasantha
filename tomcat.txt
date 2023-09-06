@@ -1,0 +1,23 @@
+tomcat is web application server where we can deploy war files butt not ear files
+installation:
+lets create centos7 vm in gccloud of size by default 20gb e2 medium type (we will get equivalent code u can copy in the shell and create vm)
+install java1.8
+install tomcat9
+after installing we need to give executable permissions for startup.sh file present in bin folder in apache....zip file
+chmod +x *
+then tomcat start running u can verify sh startup.sh
+if u want to stop sh shutdown.sh
+u can check whether tomcat is running or not --ps -ef|grep -i java* or ps -ef|grep -i apache*
+
+
+instead of going into bin folder and always doing sh startup.sh or shutdown.sh
+-go to /root folder
+ln -s /opt/tomcat9/bin/startup.sh /usr/bin/startTomcat
+ln -s /opt/tomcat9/bin/shutdown.sh /usr/bin/stopTomcat
+
+heirarchy of tomcat:
+bin-consists of startup.sh,shutdown.sh,catalina.sh(important file (restart)in tomcat),startup.bat,shutdown.bat
+conf- consists of server.xml and tomcat-users.xml
+lib - consists of jar files
+logs- consists of logs when we start tomcat it generates 4 log files
+webapps-

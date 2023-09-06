@@ -1,0 +1,31 @@
+tar -cvf demo.tar---- archival of  files
+tar -tvf ------view the files in tar
+tar -xvf extract the files from demo.tar
+giving size for a file
+---truncate -s 5k file.txt
+to compress the tar file ---gzip demo.tar
+to uncompress---gzip -d demo.tar.gz or gunzip demo.tar.gz
+to do archival and compress at same time
+--tar -cvzf passwd.tar.gz passwd
+to view contant in the compressed file first checkk the command
+---tar -cvJf passwd.tat.gz then 
+---xzcat 
+
+
+to add user in a group
+-->addgroup group-name
+-->adduser --ingroup group-name user name
+if u tried to login with username first in windows power shell
+-->vi /etc/ssh/sshd_config
+-->change yes in password authentication
+-->service sshd restart
+-->try to login again it works...
+
+
+to copy any public key from local machine to other
+-ssh-copy-id username@ip address
+ to give particular access to user- sudo usermod -aG docker usernaame
+
+when u need to give sudo permission to user
+visudo-user privilige specification  as 
+maha ALL=(ALL) NOPASSWD:ALL

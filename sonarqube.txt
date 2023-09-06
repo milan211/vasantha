@@ -1,0 +1,18 @@
+sonarqube is static code analysis tool which will be used for analysis of src code.
+to run sonar report -mvn sonar:sonar 1.plugin 2.goal
+two ways to run the sonarqube- 1.configure host url and token in pom.xml or 2.give arguments inthe command mvn sonar:somar -D<sonar.host.url>http://PUBLIC_IPADDR_OF_SONAR:9000/</sonar.host.url>
+    <sonar.login>admin</sonar.login>
+
+if we want to run sonarqube with gradle  uneed to add plugin--
+ org.gradle plugin in build.gradle
+
+
+-if we want to see different versions of java -alternatives --config java
+
+to test whether gradle is working -./gradlew installDist
+
+if java version is not supportinbg for particular microservice in gradle add -Dorg.gradle.home.java=$path( when we install differenet version) 
+
+
+quality gate-  Quality Gate in SonarQube is a set of predefined conditions that your code must meet to be considered "passing" or "acceptable" in terms of quality. 
+It acts as a gatekeeper for code quality by defining a set of thresholds for various metrics,such as code coverage, code duplication, number of bugs, code smells, and security vulnerabilities 
