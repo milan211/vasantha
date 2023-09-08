@@ -11,3 +11,10 @@ Kubelet is nothing but an agent in worker nodes .api server communicate with kub
 Controller or Controller Manager which is present in master node is used for continous monitoring of kubernetes components.it verifies whether the actual and desired states are in correct state or not. 
 kubeadm is tool which simplifies the process of building the kubernetes cluster.
 kubectl-Its a cli tool helps to communicate with API server.
+to create master and worker nodes and also install docker,kubeadm,kubectl on all nodes go to this github  notes:
+https://github.com/devopswithcloud/KubernetesRepo/blob/main/ClusterCreation/Cluster_Docker.md
+
+kubeadm provides certificates and key to api server,front proxy,etcd  etc...all the certificates are placed in /etc/kubernetes/pki
+
+ls /etc/kubernetes --admin.conf,controller-manger.conf,kubelet.conf,manifests,pki,scheduler.conf
+container network interface plugin makes to communicate among master and worker nodes.

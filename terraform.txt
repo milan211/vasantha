@@ -94,6 +94,7 @@ executes it
 
 local variabels:it will work within the modules it avoids repetition,define reusable values within your configuration
 
+
 state file is of two types local and remote state file remote state file is placed in backend here backend may be s3 or gcs or some other cloud platforms
 
 In aws s3 when we keep state file in s3 we should integrate with dynamodb table to lock the state file. in gcs by default we have a locking systemm for state file.
@@ -109,3 +110,58 @@ Infrastructure as a code(IAC)- 	3 types
 1.server templating
 2.Configuration management
 3.provisioner
+
+terraform script:
+install vms dynamically and get the ip addresss output of the vms using terraform code
+provider "aws" {
+  region = "us-east-1"
+}
+
+variable "instances" {
+  type = map(object({
+    instance_type = string
+    ami_id        = string
+    key_name      = string
+  }))
+
+  default = {
+    jenkins_master = {
+      instance_type = "t2.micro"
+      ami_id        = "ami-0123456789abcdef0"
+      key_name      = "my-key"
+    },
+    jenkins_slave = {
+      instance_type = "t2.small"
+      ami_id        = "ami-9876543210fedcba0"
+      key_name      = "my-key"
+    },
+    ansible = {
+      instance_type = "t2.nano"
+      ami_id        = "ami-55555555555555555"
+      key_name      = "my-key"
+    }
+  }
+}
+
+resource "aws_instance" "instances" {
+  count = length(keys(var.instances))
+  
+  ami           = var.instances[keys(var.instances)[count.index]].ami_id
+  instance_type = var.instances[keys(var.instances)[count.index]].instance_type
+  key_name      = var.instances[keys(var.instances)[count.index]].key_name
+
+  tags = {
+    Name = keys(var.instances)[count.index]
+  }
+}
+
+output "instance_ips" {
+  value = {
+    for instance, config in var.instances :
+    instance => {
+      public_ip  = aws_instance.instances[instance].public_ip
+      private_ip = aws_instance.instances[instance].private_ip
+    }
+  }
+}
+
