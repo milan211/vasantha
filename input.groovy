@@ -3,12 +3,11 @@ pipeline
   agent any
     stages
     {
-        stage('hello')
+        stage('checkout')
         {
             steps
             {
-                echo ('hello world"')
-
+                checkout scm
             }
         }
 

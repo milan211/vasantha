@@ -27,7 +27,8 @@ webhook integration:we do modificatioins in jenkins and also in github
 in jenkins,configure-build trigger-github hook trigger gor gitscm polling.
 in github, u need admin access for this,settings-webhook-add webhook-payload url(jenkins url(statis ip address))eg:http://34.25.12323/github-webhook/
 
-generally we wont install maven directly on jenkins master for that we use slave nodes where we install particular maven or nodejs or React applications.here if we want a specic maven version we can go to tools-maven installation-specify the version of maven and save.now go to configure-build environment-build steps-invoke maven installation-select the specific maven version.goals(package -DskipTests).if only package has given as a goal it also runs the test cases so that in target folder we can surefire reports
+generally we wont install maven directly on jenkins master for that we use slave nodes where we install particular maven or nodejs or React applications.here if we want a specic maven version we can go to tools-maven installation-specify the version of maven and save.now go to configure
+-build environment-build steps-invoke maven installation-select the specific maven version.goals(package -DskipTests).if only package has given as a goal it also runs the test cases so that in target folder we can surefire reports
 
 
 by default we will be having options like archive artifacts,publish junit test reports,email notification,etc in post build actions.
@@ -47,6 +48,7 @@ to do code quality testing of an artifact we have 2 options 1.modify in pom.xml 
     <maven.compiler.source>1.7</maven.compiler.source>
     <maven.compiler.target>1.7</maven.compiler.target>
 </properties>
+
   
 after that clone the repository into jenkins where pom.xml is present and in build steps-invoke toplevel maven targets-maven version-goals-clean package sonar:sonar
 
@@ -84,9 +86,11 @@ after clone the repository from github to jenkins build steps-invoke top level m
 NOTE: deploy means the artifact is stored in local i.e,.M2 folder,target folder and also in nexus repo
 
 discard old builds-if we want to remove old builds
-if the sonar and nexus in patch mode and we need to say the developers to dont  run jobs if they run the jobs will fail, in this case we can use disable project if we disable the  project we cant see build now option on dashboard -enable project
+if the sonar and nexus in patch mode and we need to say the developers to dont  run jobs if they run the jobs will fail, in this case we can use disable project 
+if we disable the  project we cant see build now option on dashboard -enable project
 
-till now we are using public repository for cloning but if we need to use private repo from github we need to configure credentials in jenkins for that Manage jenkins-security-credentials.credentials are of different types like secret text, oauth credentials,username with password,ssh username with Private key,certificate etc..
+till now we are using public repository for cloning but if we need to use private repo from github we need to configure credentials in jenkins for that Manage jenkins
+-security-credentials.credentials are of different types like secret text, oauth credentials,username with password,ssh username with Private key,certificate etc..
 
 permalinks-from here we are getting last failed ,last build, last success 
 
@@ -129,7 +133,8 @@ in java-slave useradd,passwd,vim /etc/ssh/sshd_config---password authentication=
 systemctl restart sshd.service
 usermod -aG wheel username
 username@ip address
-remote root directory-/home/vasantha/jenkins (it can be any because by default it doent have jenkins we are craeting our custom path to get whatever the tool plugins jobs workspace evrything should be executed in this home directory)
+remote root directory-/home/vasantha/jenkins (it can be any because by default it doent have jenkins we are craeting our custom path to get whatever the tool plugins
+jobs workspace evrything should be executed in this home directory)
 LABEL- java-slave
 usage-( use this node as much as possible )
 launch agents via SSH
@@ -146,6 +151,83 @@ by default when we install there is WORKFLOW-BASIC STEPS PLUGIN
 
  we can run multiple pipelines at a time using multibranch pipeline by filtering according to jenkins file in different branches
  
+Creating multibranch pipeline:
 
+lab:
+for that we need to create multiple branches in github repository and then configure git repo url 
+in build configration, in script path provide jenkins file. that means where jenkin fle is placed in 
+branches it pulls from the repository
+
+whenever we are creating branches in github it automatically builds but it should not happen in real time because when relaease branch  should not build always as 
+it needs to send to production for that
+go to configuration-branch source- property startegy-supress automatic triggering- save it---so that it tracks the branch but it does not build automatically
+
+Ofcourse we dont send the code from branches to prod instaed we use tags because the coed cannot be modified.
+
+we can create environment variables in pipeline or at the stage.
+
+
+if we need every details about jenkins pipeline sh "printenv". we will get all the system info.
+
+when u dont know command u can use snippet genrator in jenkins pipeline jobs
+
+if we have multiple stages when we are building the pipeine u can use full stage view
+
+pipeline:declarative pipeline
+
+pipeline {
+    agent {
+        label 'node-slave'
+    } 
+    stages {
+        stage ('Welcome'){
+            steps {
+                echo "Welcome to jenkins Pipleine Mastery"
+                sh 'hostname -i' // this should print the private ip
+            }
+        }
+        stage ('SecondStage'){
+            agent {
+                label 'java-slave'
+            }
+            steps {
+                echo "Printing in Java Slave"
+                sh 'hostname -i'
+            }
+        }
+    }
+}
+
+
+##when u need to use custom workspace we nee to use node.but node almost similar to agent
+
+
+// agent with node 
+pipeline {
+    agent {
+        node {
+            label 'java-slave' // /home/siva/
+            customWorkspace '/home/siva/my-custom'
+        }
+    }
+    stages {
+        stage ('Welcome to slave'){
+            steps {
+                echo "Welcome to slave"
+                sh 'hostname -i'
+            }
+        }
+        stage ('clone'){
+            steps {
+                //script 
+                git branch: 'main', url: 'https://github.com/devopswithcloud/KubernetesRepo.git'
+            }
+        }
+    }
+}
+
+
+	
+  
 
 

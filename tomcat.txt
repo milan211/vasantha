@@ -20,4 +20,24 @@ bin-consists of startup.sh,shutdown.sh,catalina.sh(important file (restart)in to
 conf- consists of server.xml and tomcat-users.xml
 lib - consists of jar files
 logs- consists of logs when we start tomcat it generates 4 log files
-webapps-
+webapps-by default applications will be present here and also the applications we deployed will be present in wwebapps folder
+
+tomcat dashboard by default we dont have access to see the manager  and host applications for that we need to comment the value in manager and host applications
+
+we can also deploy multiple applications on one tomcat server.... in context path u need to give /cart 
+
+to choose war file we czn use winscp to copy the war file from tomcat server to local machine
+
+when we are facing internet we wont expose application servers for that configuring proxy servers to run tomcat servers behind that	
+
+
+/opt/tomcat9/conf/server.xml----connector port="8085" proxy port="80"(done modification in tomcat server)
+/etc/httpd/conf.d/tomcat_manager.conf  --vim tomcat_manager.conf
+<VirtualHost *:80>
+    serverName: ipaddress
+    ProxyPreserveHost On
+    ProxyPass / http://localhost:8085/
+    ProxyPassReverse / http://localhost:8085/
+</VirtualHost>
+
+

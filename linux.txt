@@ -1,0 +1,19 @@
+awk '{print $NF}' demo.txt- to print last column
+awk '{print NR ":" $0}' demo.txt- to print the column with numbers
+awk -F, '{print $4}' demo.txt- here -F, is the field seperator and here we are giving that as comma
+example:
+cat data
+ID NAME SALARY COUNTRY
+1 pol 25000 India
+2 bont 45000 belgium
+3 loki 55000 germany
+4 hina 35000 India
+awk '{if($3>40000) print $0}' data
+awk '{if($2==pol){$3=80000}print $0}' data
+To search any word and print the related word present rows:
+awk '/Indai/{print $0}' demo.txt
+
+if we want to login into instance from gitbash
+cd path to pem file
+chmod 400 .pem file
+copy the link from ssh client and paste in gitbash to login into the instance

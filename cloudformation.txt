@@ -1,0 +1,1 @@
+cloud formation building blocks:resources,parameter,mappings,outputs,conditionals

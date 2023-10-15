@@ -1,5 +1,5 @@
 generating csr certificate from digicert for renewing wildcard domains 
-first we nned to check expiration date of cert in SSL CHECKER
+first we need to check expiration date of cert in SSL CHECKER
 digicert-orders- copy the domain name-certificate actions-renew cert 
 all the wildcard renewals need to go to CAB approval
 SSL certs should be purchased for 1 year

@@ -1,0 +1,32 @@
+Pipeline to pull code from github using PAT using with credentials
+
+
+pipeline {
+    agent any
+
+    environment {
+        // Define the credential ID for your GitHub personal access token
+        GITHUB_CREDENTIALS = credentials('your-github-token-credential-id')
+    }
+
+    stages {
+        stage('Example') {
+            steps {
+                script {
+                    // Use the GitHub personal access token within the pipeline
+                    withCredentials([string(credentialsId: env.GITHUB_CREDENTIALS, variable: 'GITHUB_TOKEN')]) {
+                        // Check out code from the GitHub repository using the personal access token
+                        checkout([$class: 'GitSCM',
+                                  branches: [[name: 'master']],
+                                  userRemoteConfigs: [[
+                                      url: 'https://github.com/yourusername/your-repo.git',
+                                      credentialsId: env.GITHUB_CREDENTIALS
+                                  ]]])
+                    }
+                }
+            }
+        }
+    }
+
+    // Post-build actions and other pipeline configurations
+}

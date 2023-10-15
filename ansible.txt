@@ -113,7 +113,7 @@ while pasting yaml file in vi editor sometimes formatting may change then esc+:s
   - name: Start the service
     service: 
       name: httpd
-      enabled: true
+		      enabled: true
       state: started
   - name: Copy the html file 
     copy: 
@@ -303,6 +303,8 @@ If i want to run a specific task in a playbook we can use tags
 to encrypt secrets wehave vault mechanism in ansible
 ansible-vault --help
 ansible-vault encrypt /etc/ansible/group_vars/all.yaml
+
+if we need to encrypt the password - ansible all -m ping --vault-password-file=vault
 
 
 
