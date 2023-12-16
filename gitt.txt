@@ -1,0 +1,98 @@
+git config --global user.name "w3schools-test"
+git config --global user.email "test@w3schools.com"
+mkdir myproject
+cd myproject
+git init 
+Initialized empty Git repository in /Users/user/myproject/.git/
+git add index.html
+git status
+On branch master
+
+No commits yet
+
+Changes to be committed:
+  (use "git rm --cached ..." to unstage)
+    new file: index.html
+add all files in the current directory to the Staging Environment
+git add --all
+The shorthand command for git add --all is git add -A
+git commit -m "First release of Hello World!"
+git status --short
+Short status flags are:
+
+?? - Untracked files
+A - Files added to stage
+M - Modified files
+D - Deleted files
+ commit it directly
+git commit -a -m "Updated index.html with a new line"
+history of commits for a repository
+git log
+git command -help -  See all the available options for the specific command
+git help --all -  See all possible commands
+Branches allow you to work on different parts of a project without impacting the main branch.
+
+When the work is complete, a branch can be merged with the main project.
+
+
+
+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
+
+You can even switch between branches and work on different projects
+create a new branch
+git branch hello-world-images
+git checkout -b emergency-fix
+git merge emergency-fix
+git branch -d emergency-fix
+Deleted branch emergency-fix 
+Since we have already set up a local Git repo, we are going to push that to GitHub:
+git remote add origin https://github.com/w3schools-test/hello-world.git
+git push --set-upstream origin master
+pull is a combination of 2 different commands:
+fetch
+merge
+git fetch origin
+git log origin/master
+git diff origin/master
+git pull origin
+A Pull Request notifies people you have changes ready for them to consider or review.
+
+ You can ask others to review your changes or pull your contribution and merge it into their branch
+When sharing your code with others, there are often files or parts of your project, you do not want to share.
+
+Examples
+
+log files
+temporary files
+hidden files
+personal files
+etc.
+Git can specify which files or parts of your project should be ignored by Git using a .gitignore file.
+# ignore ALL .log files
+*.log
+
+# ignore ALL files in ANY directory named temp
+temp/
+Now all .log files and anything in temp folders will be ignored by Git.
+ssh-keygen -t rsa -b 4096 -C "test@w3schools.com"
+SSH is a secure shell network protocol that is used for network management, remote file transfer, and remote system access.
+
+SSH uses a pair of SSH keys to establish an authenticated and encrypted secure network protocol. It allows for secure remote communication on unsecured open networks.
+
+SSH keys are used to initiate a secure "handshake". When generating a set of keys, you will generate a "public" and "private" key.
+
+The "public" key is the one you share with the remote party. Think of this more as the lock.
+
+The "private" key is the one you keep for yourself in a secure place. Think of this as the key to the lock.
+test our connection via SSH to GitHub
+ssh -T git@github.com
+revert is the command we use when we want to take a previous commit and add it as a new commit, keeping the log intact.
+git revert HEAD --no-edit
+reset is the command we use when we want to move the repository back to a previous commit, discarding any changes made after that commit.
+commit --amend is used to modify the most recent commit.
+
+It combines changes in the staging environment with the latest commit, and creates a new commit.
+
+This new commit replaces the latest commit entirely.
+
+milan token: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

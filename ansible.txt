@@ -1,0 +1,313 @@
+ansible is configuration management tool,, it is push based mechanism.
+architecture:
+installation:
+ 1.create ansible controller-ansible nodes 2 vms using gcp
+login into the two srvers and add user ansible i.e,useradd ansible ,passwd ....
+visudo write ansible ALL=ALL NO PASSWD in two nodes ansible controller & ansible nodes
+vi /etc/ssh/sshd_config uncomment passwordauthentication as yes and comment passwordauthentication  as  no in both the vms.
+restart the service systemctl sshd restart (we can also create two vms using terraform script)
+verify whether python is installed on ansible server after that install ansible using yum install ansible -y (we will install ansible in only one server i.e, ansible server)
+
+
+As we created three servers i.e,ansible controller, ansible-centos,ansible-ubuntu 
+if we need to connect with other hosts 
+
+by default inventory files will be located in /etc/ansible/hosts
+
+# Switch to ansible user from controller
+su - ansible
+
+# Add private ips of your hosts under 
+/etc/ansible/hosts
+
+# In ansible controller , create a key pair
+ssh-keygen
+
+# Copy the keys into the hosts as ansible user
+ssh-copy-id ansible@<PRIVAT_IP_ADDRESS_OF_HOST>
+
+# Try to connect to hosts, without password
+ssh ansible@<PRIVAT_IP_ADDRESS_OF_HOST> # No password should be asked. 
+
+ansible all -m ping -to check the other hosts connected or not 
+ansible all -i inv -m ping- it executes particular host i.e, vi inv 10.32.23.42
+
+# Inform ansible to ensure repo is updated,  apache2 is installed 
+ansible -b -i ubuntuhost -m apt -a "name=apache2 state=present update_cache=yes" all
+here, -i is inventory,-m is for giving command,-a is an argument
+
+ if we want to have list of all modules in cli :ansible-doc-l
+if we want to have specific module-: ansible-doc-apt
+ansible all -m shell -a "date"
+ansible <private ip address> -b -m yum -a "name=tree"
+ansible all -m copy -a "src=siva.txt dest=/tmp/testing.txt"
+
+/usr/bin/ansible -to check what variables are available to a host
+
+setup- gather facts about remote hosts
+
+if want the iventory file created by us rather than using default file we need to configure inventory file in emvironment variables
+
+sample playbook:
+
+---
+-hosts:all	
+ tasks:
+ -name:pingservers
+  ping:
+
+to run the above playbook..place the yaml file ping.yaml
+ansible-playbook -i inventory ping.yaml --syntax-check (to check syntactical errors in ping.yaml)
+to run
+ansible-playbook -i inventory ping.yaml --check 
+to execute
+ansible-playbook -i inventory ping.yaml 
+
+# create a file using file module
+---
+- hosts: all
+  tasks:
+  - name: create file
+    file: 
+      path: /tmp/file.txt
+      owner: ansible
+      state: touch
+      mode: 0777
+
+
+while pasting yaml file in vi editor sometimes formatting may change then esc+:set paste then paste the code.
+
+# Install webserver on host
+---
+- hosts: all
+  become: true
+  tasks:
+  - name: Install Apache httpd
+    yum:
+      name: httpd
+      state: present
+  - name: Start the service
+    service: 
+      name: httpd
+      enabled: true
+      state: started
+  - name: Copy the html file 
+    copy: 
+      src: index.html
+      dest: /var/www/html/index.html
+    
+
+
+
+---
+- hosts: all
+  become: true
+  vars:
+    coursename: devops
+    batchnumber: 10
+  tasks:
+  - name: Install Apache httpd
+    yum:
+      name: httpd
+      state: present
+  - name: Start the service
+    service: 
+      name: httpd
+		      enabled: true
+      state: started
+  - name: Copy the html file 
+    copy: 
+      src: index.html
+      dest: /var/www/html/index.html
+
+
+here we are trying to dynamically change the variables in index.html
+eg: vim index.html welcome to ${{coursename}} of {{batchnumber}}
+but the output gives same instead of dynamically changing the data as welcome to ${{coursename}} of {{batchnumber}}
+
+then u need to use template module to get the output dynamically
+---
+- hosts: all
+  become: true
+  vars:
+    coursename: devops
+    batchnumber: 10
+  tasks:
+  - name: Install Apache httpd
+    yum:
+      name: httpd
+      state: present
+  - name: Start the service
+    service: 
+      name: httpd
+      enabled: true
+      state: started
+  - name: Copy the html file 
+    template: 
+      src: index.html
+      dest: /var/www/html/index.html
+
+here the output:
+welcome to devops of 10
+
+dynamically passing the variables:
+run this command: ansible-playbook -i inventory install.yaml -e coursename=helm --extra-vars batchnumber=11
+
+if there is any change in the data then only it should restart the service at that time we use HANDLERS, which will be run after the end of the play
+
+---
+- hosts: all
+  become: true
+  vars: 
+    courseName: Kubernetes
+    batchNumber: 10
+  tasks:
+  - name: Install Apache httpd
+    yum:
+      name: httpd
+      state: present
+  - name: Copy the html file 
+    template:  # previously copy
+      src: index.html
+      dest: /var/www/html/index.html
+    notify: 
+    - Restart the service 
+  handlers:
+  - name: Restart the service 
+    service: 
+      name: httpd
+      enabled: true
+      state: restarted
+
+# We can use a module as handlers
+# Handlers are a special task which will be running at the end of the play been notified by another task
+
+---
+- hosts: all
+  become: true
+  vars_files:
+   -variable.yaml   #we can also pass the variables locally through a file
+  tasks:
+  - name: Install Apache httpd
+    yum:
+      name: httpd
+      state: present
+  - name: Copy the html file 
+    template:  # previously copy
+      src: index.html
+      dest: /var/www/html/index.html
+    notify: 
+    - Restart the service 
+  handlers:
+  - name: Restart the service 
+    service: 
+      name: httpd
+      enabled: true
+      state: restarted
+
+if we want to pass variable filename dynamically
+
+---
+- hosts: all
+  become: true
+  vars:
+  - env: dev	#by default variable if we didnt pass anything in command
+  vars_files:
+   -{{env}}_vars.yaml  
+  tasks:
+  - name: Install Apache httpd
+    yum:
+      name: httpd
+      state: present
+  - name: Copy the html file 
+    template:  # previously copy
+      src: index.html
+      dest: /var/www/html/index.html
+    notify: 
+    - Restart the service 
+  handlers:
+  - name: Restart the service 
+    service: 
+      name: httpd
+      enabled: true
+      state: restarted
+
+after that we need to run ansible-playbook -i ../inventory dynamicinstall.yaml -e env=prod
+
+#to install multiple packages
+---
+-hosts: all
+ become: true
+ tasks:
+ -name:install multiple packages
+  yum:
+    name: "{{item}}"
+    state: present
+  with_items:
+  -git
+  -unzip
+  -tree
+
+to resolve any deprecation warnings go to/etc/ansible there ansible.cfg make that as deprecation_warnings=false
+
+to write customised module in ansible we can write using python 
+
+using conditional statement writing a playbook
+---
+-hosts:all
+ become: true
+ tasks: 
+ -name: install webserver on node
+  yum:
+   name:httpd
+   state: present
+  when: ansible_os_family== "Redhat"
+ -name:install apache on node
+  apt:
+   name:apache
+   state: present
+  when: ansible_os_family== "Debian" 
+
+If i want to run a specific task in a playbook we can use tags	
+
+---
+- hosts: all
+  become: true
+  vars: 
+    courseName: Kubernetes
+    batchNumber: 10
+  tasks:
+  - name: Install Apache httpd
+    tags: 
+    - install
+    yum:
+      name: httpd
+      state: present
+  - name: Start the service
+    tags:
+    - start
+    service: 
+      name: httpd
+      enabled: true
+      state: started
+  - name: Copy the html file 
+    tags: 
+    - copy
+    template:  # previously copy
+      src: index.html
+      dest: /var/www/html/index.html
+
+# ansible-playbook -i inv taks.yaml --list-tags
+# ansible-playbook -i inv taks.yaml --tags 'copy'
+
+to encrypt secrets wehave vault mechanism in ansible
+ansible-vault --help
+ansible-vault encrypt /etc/ansible/group_vars/all.yaml
+
+if we need to encrypt the password - ansible all -m ping --vault-password-file=vault
+
+
+
+
+
+ 

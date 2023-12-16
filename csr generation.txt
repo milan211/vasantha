@@ -1,0 +1,9 @@
+generating csr certificate from digicert for renewing wildcard domains 
+first we need to check expiration date of cert in SSL CHECKER
+digicert-orders- copy the domain name-certificate actions-renew cert 
+all the wildcard renewals need to go to CAB approval
+SSL certs should be purchased for 1 year
+BUndle cert consists of server cert(top) and intermediate cert(bottom)
+before we used geotrust portal now we are using digicert for purchasing and renewing certificates.
+using bundle cert and key we will update the cert in imperva using HPOO or we can update the cert in imperva using imperva only
+once it is uploaded to imperva go to imperva-site-custom certificate under setting-general

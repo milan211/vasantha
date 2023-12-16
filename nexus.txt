@@ -1,0 +1,28 @@
+
+to install nexus 
+we need to have java 1.8
+after running nexus in server create first release and first snapshot repo seperately in nexus in mavenhosted  
+we need to put credentials in settings.xml and distribution management tag in pom.xml
+<distributionManagement>
+    <repository>
+        <id>nexus</id>  
+        <name>Release Repos</name>
+        <url>http://PUBLIC_IP_OF_NEXUS:8081/repository/spring-release/</url>
+     </repository>
+    <snapshotRepository>
+        <id>nexus</id>
+        <name>Snapshot Repos</name>
+        <url>PUBLIC_IP_OF_NEXUS:8081/repository/first-snapshot/</url>
+    </snapshotRepository>
+</distributionManagement>
+
+
+<servers>
+  <server>
+    <id>nexus</id>
+    <username>admin</username>
+    <password>Gcp@2023</password>
+  </server>
+</servers>
+
+ 

@@ -1,0 +1,28 @@
+---
+- name: Configure a web server
+  hosts: webservers
+  tasks:
+    - name: Install Apache web server
+      apt:
+        name: apache2
+        state: present
+    - name: Start Apache service
+      service:
+        name: apache2
+        state: started
+
+
+Application deployment
+
+---
+- name: Deploy my App
+  hosts: app_servers
+  tasks:
+    - name: Copy application code
+      copy:
+        src: /path/to/app
+        dest: /var/www/myapp
+    - name: Restart application service
+      service:
+        name: myapp
+        state: restarted

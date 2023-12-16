@@ -1,0 +1,22 @@
+google invented kubernetes.it is a open source container orchestration system
+automate application deployment,scaling, 
+there are different components in kubernetes like masternode,workernode,kube apiserver, etcd, scheduler, control manager,kubelet,kube proxy,container runtime
+cluster is combination of master nodes and worker nodes.
+kubectl+manifest file which is outside will send to master node and this is exposed because of the api server component present in Master node which acts as a frontend in kubernetes.
+Master node is also called as Control Plane.kubernetes will communictae first with api server.Api server will first authenticate, authorize and validate the request from kubectl whether it has permission to communicate with api server.
+worker node can also be called as data plane.
+ETCD is a backend data store. it acts as a database for the whole k8s cluster.ETCD stores the cluster information
+ETCD sends information to Scheduler which is decision maker to deploying application to pods.scheduler tells pods should be deployed on the particular worker nodes.
+Kubelet is nothing but an agent in worker nodes .api server communicate with kubelet to deploy pods in worker node.kubelet communicate with CRT(Container Run time) to create container.but kubernetes doesnt understand containers so it is wrapped up with pod.
+Controller or Controller Manager which is present in master node is used for continous monitoring of kubernetes components.it verifies whether the actual and desired states are in correct state or not. 
+kubeadm is tool which simplifies the process of building the kubernetes cluster.
+kubectl-Its a cli tool helps to communicate with API server.
+to create master and worker nodes and also install docker,kubeadm,kubectl on all nodes go to this github  notes:
+https://github.com/devopswithcloud/KubernetesRepo/blob/main/ClusterCreation/Cluster_Docker.md
+
+kubeadm provides certificates and key to api server,front proxy,etcd  etc...all the certificates are placed in /etc/kubernetes/pki
+
+ls /etc/kubernetes --admin.conf,controller-manger.conf,kubelet.conf,manifests,pki,scheduler.conf
+container network interface plugin makes to communicate among master and worker nodes.
+
+namespaces logically divide cluster to deploy our resources(objects)

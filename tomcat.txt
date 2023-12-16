@@ -1,0 +1,43 @@
+tomcat is web application server where we can deploy war files butt not ear files
+installation:
+lets create centos7 vm in gccloud of size by default 20gb e2 medium type (we will get equivalent code u can copy in the shell and create vm)
+install java1.8
+install tomcat9
+after installing we need to give executable permissions for startup.sh file present in bin folder in apache....zip file
+chmod +x *
+then tomcat start running u can verify sh startup.sh
+if u want to stop sh shutdown.sh
+u can check whether tomcat is running or not --ps -ef|grep -i java* or ps -ef|grep -i apache*
+
+
+instead of going into bin folder and always doing sh startup.sh or shutdown.sh
+-go to /root folder
+ln -s /opt/tomcat9/bin/startup.sh /usr/bin/startTomcat
+ln -s /opt/tomcat9/bin/shutdown.sh /usr/bin/stopTomcat
+
+heirarchy of tomcat:
+bin-consists of startup.sh,shutdown.sh,catalina.sh(important file (restart)in tomcat),startup.bat,shutdown.bat
+conf- consists of server.xml and tomcat-users.xml
+lib - consists of jar files
+logs- consists of logs when we start tomcat it generates 4 log files
+webapps-by default applications will be present here and also the applications we deployed will be present in wwebapps folder
+
+tomcat dashboard by default we dont have access to see the manager  and host applications for that we need to comment the value in manager and host applications
+
+we can also deploy multiple applications on one tomcat server.... in context path u need to give /cart 
+
+to choose war file we czn use winscp to copy the war file from tomcat server to local machine
+
+when we are facing internet we wont expose application servers for that configuring proxy servers to run tomcat servers behind that	
+
+
+/opt/tomcat9/conf/server.xml----connector port="8085" proxy port="80"(done modification in tomcat server)
+/etc/httpd/conf.d/tomcat_manager.conf  --vim tomcat_manager.conf
+<VirtualHost *:80>
+    serverName: ipaddress
+    ProxyPreserveHost On
+    ProxyPass / http://localhost:8085/
+    ProxyPassReverse / http://localhost:8085/
+</VirtualHost>
+
+

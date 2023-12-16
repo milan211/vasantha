@@ -1,0 +1,233 @@
+to install jenkins we nned to have java 11
+
+after that install jenkins
+by default jenkins will be there in /var/lib/jenkins there u can see jobs,tools,workspace,nodes etc
+jenkins run at port 8080 
+in jenkins dashboard u can see new item build trigger,manage jenkins,build executors,build history,build queue
+here manage jenkins is very crucial as there will be having system,tools,plugins,nodes and clouds,credentials
+to safely restart jenkins when we installed plugins u can use safe restart plugin
+to integrate sonarqube with jenkins u can use sonarscanner plugin or modify pom.xml at properties
+to integrate nexus with jenkins u can use nexus paltform plugin or modify pom.xml and settings.xml 
+if we want to deploy plugin from outside u can download the plugin with extension .hpi file
+
+in jenkins we have different types of jobs like freestyle,pipeline(declarative,scripted),github organisation,multibranch pipeline,folder
+In a Multibranch Pipeline project, Jenkins automatically discovers, manages and executes Pipelines for branches which contain a Jenkinsfile in source control.
+
+Organization Folders enable Jenkins to monitor an entire GitHub Organization create new Multibranch Pipelines for repositories which contain branches and pull requests containing a Jenkinsfile.
+in /var/lib/jenkins we have jobs,workspace,logs,plugins,users,nodes,secrets.In jobs only the info of jobs be presented but the data related to jobs will be present in the workspace. when we run the jobs then we can see those in the workspace.
+
+we use scm to clone git repository and also make sure about the branch.
+
+difference between build periodically and poll SCM:
+buildperiodically: build every minute eventhough there is no change in git.
+Poll SCM: it only builds when there is change.
+
+if developer made any commit in github then only it build,no need to poll periodically for this we use webhook
+webhook integration:we do modificatioins in jenkins and also in github 
+in jenkins,configure-build trigger-github hook trigger gor gitscm polling.
+in github, u need admin access for this,settings-webhook-add webhook-payload url(jenkins url(statis ip address))eg:http://34.25.12323/github-webhook/
+
+generally we wont install maven directly on jenkins master for that we use slave nodes where we install particular maven or nodejs or React applications.here if we want a specic maven version we can go to tools-maven installation-specify the version of maven and save.now go to configure
+-build environment-build steps-invoke maven installation-select the specific maven version.goals(package -DskipTests).if only package has given as a goal it also runs the test cases so that in target folder we can surefire reports
+
+
+by default we will be having options like archive artifacts,publish junit test reports,email notification,etc in post build actions.
+
+to craete static ipa address in gcp,vpc networks-ip address-promote to static ip addresses
+
+to restart jenkins safely we need to install safe restart plugin.this will be available only for admins.
+
+whatever settings or configuration paths we nned to modify go to manage jenkins-system
+
+to do code quality testing of an artifact we have 2 options 1.modify in pom.xml 2.mvn -D sonar:sonar
+1.In POM.xml,
+<properties>
+    <sonar.host.url>http://PUBLIC_IPADDR_OF_SONAR:9000/</sonar.host.url>
+    <sonar.login>token of sonar</sonar.login>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.source>1.7</maven.compiler.source>
+    <maven.compiler.target>1.7</maven.compiler.target>
+</properties>
+
+  
+after that clone the repository into jenkins where pom.xml is present and in build steps-invoke toplevel maven targets-maven version-goals-clean package sonar:sonar
+
+after sonarqube tested code quality, the artifact should be moved to nexus repository, for that we need to make changes in pom.xml like
+<distributionManagement>
+    <repository>
+        <id>nexus</id>  
+        <name>Release Repos</name>
+        <url>http://PUBLIC_IP_OF_NEXUS:8081/repository/spring-release/</url>
+     </repository>
+    <snapshotRepository>
+        <id>nexus</id>
+        <name>Snapshot Repos</name>
+        <url>PUBLIC_IP_OF_NEXUS:8081/repository/first-snapshot/</url>
+    </snapshotRepository>
+</distributionManagement>
+also we need to configure settings.xml in maven 
+as we are using maven version path  configure the nexus creds here vi /opt/apache-maven-3.8.8/conf/settings.xml
+  <server>
+    <id>nexus</id>
+    <username>admin</username>
+    <password>Gcp@2023</password>
+  </server>
+``
+```xml
+<servers>
+  <server>
+    <id>nexus</id>
+    <username>admin</username>
+    <password>Gcp@2023</password>
+  </server>
+</servers>
+
+after clone the repository from github to jenkins build steps-invoke top level maven targets- goals-clean deploy sonar:sonar
+NOTE: deploy means the artifact is stored in local i.e,.M2 folder,target folder and also in nexus repo
+
+discard old builds-if we want to remove old builds
+if the sonar and nexus in patch mode and we need to say the developers to dont  run jobs if they run the jobs will fail, in this case we can use disable project 
+if we disable the  project we cant see build now option on dashboard -enable project
+
+till now we are using public repository for cloning but if we need to use private repo from github we need to configure credentials in jenkins for that Manage jenkins
+-security-credentials.credentials are of different types like secret text, oauth credentials,username with password,ssh username with Private key,certificate etc..
+
+permalinks-from here we are getting last failed ,last build, last success 
+
+in individual jobs we have builds,config.xml.
+
+In job we will be having configurational data, In workspace we will be having actual data of jobs
+ 
+next build number plugin-to set next build number in jenkins
+ 
+Add timestamps to console output- 
+ 
+buildnumber and descripter setter-branch name-$(buildnumber)
+ 
+Audit Trail plugin -get logs who performed jenkins operations 
+ 
+thin backup plugin- to create backup of /var/lib/jenkins
+ 
+deploy to container plugin- it can seen in post build actions as deploy war/ear files
+ 
+nexus platform-to integrate nexus with jenkins.u will be seen add buid steps-nexus repository manager publisher
+
+to integrate sonar with jenkins using free style jobs use this plugin-sonar quality gate u can see in post build actions as quality gates sinarqube plugin
+
+to get notifications through email whether sonar analysis has failed or passed. by default jenkins have mailer ,email extension plugin. u can see in manage jenkins-system-extended email notification and email notification 	
+we need to configure SMTP server ,smtp port,receipient details evrything,every company have their own smtp server and smtp port
+if we connect our gmail with jenkins security- 2 stepn verification- app passwords-others-jenkins -it generates a password
+
+Jacaco is another plugin to analyse the code while running itself instead of sonar analysis of code
+
+no of executors can be customised by us according to the server capacity manage jenkins-system- no of executors. we can execute jobs parallel .if we want to execute same job again then use configure-general-execute concurrent builds if necessary.
+ 
+
+
+in folder we can create multiple jobs 
+master slave configuration
+
+we have jenkins master vm and we created javaslave vm as a slave 
+install java11,mvn and java17  in javaslave (no need to install jenkins in slave vm as we are going to integrate)
+in java-slave useradd,passwd,vim /etc/ssh/sshd_config---password authentication=yes
+systemctl restart sshd.service
+usermod -aG wheel username
+username@ip address
+remote root directory-/home/vasantha/jenkins (it can be any because by default it doent have jenkins we are craeting our custom path to get whatever the tool plugins
+jobs workspace evrything should be executed in this home directory)
+LABEL- java-slave
+usage-( use this node as much as possible )
+launch agents via SSH
+hostname(private ip address of slave node)
+credentials(vasantha password)
+host key verification strategy (non verifying verification strategy)
+availability (keep this agent online as much as possible)
+
+if we login to java slave node u will be having jenkins folder in that there is remoting remoting.jar . in remoting u will having logs, jarcache ...
+
+in configure- restrict where the project should run -label(java-slave)
+
+by default when we install there is WORKFLOW-BASIC STEPS PLUGIN
+
+ we can run multiple pipelines at a time using multibranch pipeline by filtering according to jenkins file in different branches
+ 
+Creating multibranch pipeline:
+
+lab:
+for that we need to create multiple branches in github repository and then configure git repo url 
+in build configration, in script path provide jenkins file. that means where jenkin fle is placed in 
+branches it pulls from the repository
+
+whenever we are creating branches in github it automatically builds but it should not happen in real time because when relaease branch  should not build always as 
+it needs to send to production for that
+go to configuration-branch source- property startegy-supress automatic triggering- save it---so that it tracks the branch but it does not build automatically
+
+Ofcourse we dont send the code from branches to prod instaed we use tags because the coed cannot be modified.
+
+we can create environment variables in pipeline or at the stage.
+
+
+if we need every details about jenkins pipeline sh "printenv". we will get all the system info.
+
+when u dont know command u can use snippet genrator in jenkins pipeline jobs
+
+if we have multiple stages when we are building the pipeine u can use full stage view
+
+pipeline:declarative pipeline
+
+pipeline {
+    agent {
+        label 'node-slave'
+    } 
+    stages {
+        stage ('Welcome'){
+            steps {
+                echo "Welcome to jenkins Pipleine Mastery"
+                sh 'hostname -i' // this should print the private ip
+            }
+        }
+        stage ('SecondStage'){
+            agent {
+                label 'java-slave'
+            }
+            steps {
+                echo "Printing in Java Slave"
+                sh 'hostname -i'
+            }
+        }
+    }
+}
+
+
+##when u need to use custom workspace we nee to use node.but node almost similar to agent
+
+
+// agent with node 
+pipeline {
+    agent {
+        node {
+            label 'java-slave' // /home/siva/
+            customWorkspace '/home/siva/my-custom'
+        }
+    }
+    stages {
+        stage ('Welcome to slave'){
+            steps {
+                echo "Welcome to slave"
+                sh 'hostname -i'
+            }
+        }
+        stage ('clone'){
+            steps {
+                //script 
+                git branch: 'main', url: 'https://github.com/devopswithcloud/KubernetesRepo.git'
+            }
+        }
+    }
+}
+
+
+	
+  
+
+

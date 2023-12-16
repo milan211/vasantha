@@ -1,0 +1,107 @@
+maven is build tool 
+-we need to install jdk in our local machine after that we need to install maven (downloading zip file) from docs
+-so install jdk in windows power shell
+-check with 'javac'
+-write helloworld.java in javacode folder on desktop vscode 
+-open that in powershell as-ls
+			   -javac ./helloworld.java
+-u will get some class file
+-then need to execute -java Helloworld (class name)
+
+# build tool is used to compile and make the source code executable as jar or war files.
+#maven or gradle are the build tools used for java based applications.
+#through maven we will package the source code a sna artifact then only we can move the arifact
+into the servers for ci-cd pipelines
+
+on ubuntu machine install jdk
+-apt update -y
+-apt search jdk
+-apt install openjdk-jdk-17
+**install maven**
+-download the maven tar file from documentation(copy - wget link of tar file)
+-ls -la
+*untar the file*
+-tar -xvzf apache maven ....tar.gz
+ls apache-maven 3.8.8
+bin   boot   conf   lib   LICENSE    NOTICE    README
+echo $PATH
+cd bin/
+ls -la
+pwd  -/opt/apache-maven-3.8.8/bin
+export PATH= $PATH:/opt/apache-maven-3.8.8/bin
+$PATH
+mvn --version
+
+Apache Maven 3.8.8 (4c87b05d9aedce574290d1acc98575ed5eb6cd39)
+Maven home: C:\apache-maven-3.8.8-bin\apache-maven-3.8.8
+Java version: 17.0.7, vendor: Oracle Corporation, runtime: C:\Program Files\Java\jdk-17
+Default locale: en_IN, platform encoding: Cp1252
+OS name: "windows 10", version: "10.0", arch: "amd64", family: "windows"
+
+
+## if we relogin into the session we cant see maven version ##
+#to make the maven installation permanent#
+-vi /etc/profile.d/maven.sh
+copy here export PATH= $PATH:/opt/apache-maven-3.8.8/bin
+chmod +x /etc/profile.d/maven.sh
+source /etc/profile.d/maven.sh
+##relogin again and check##
+mvn --version
+
+
+
+java project structure
+source code =$base dir/src/main/java
+test cases =$base dir/src/main/test
+resources= $base dir/src/main
+
+pom.xml is the heart of maven
+<in pom.xml file there are components>
+<like model version,groupid,artifact,version>
+
+for practice
+create files according to maven hierarchy
+in gitbash cd desktop/hello maven
+		mkdir -p src/main/java
+		cd src/main/java
+		mkdir com/sivacademy/devops
+		cd com/sivacademy/devops
+		touch utils.java
+		touch helloworld.java
+through vscode editor write source code in the above two files
+#whenever we r running commands in maven first we need to be in where pom.xml exists
+
+mvn validate- it checks whether the pom.xml file consists of directory structure and files
+mvn compile-it will compile utils.java and helloworld.java and create class files in target folder
+class files will be packaged as jar or war files in the target folder-mvn package
+
+generally devlpers check the test cases for java we need to have plugin called as junit using this junit we can run the test  cases
+eg:dot net-nunit, cpp- cppunit etc...
+
+
+
+in maven there are goals or phases
+
+if we want to compile test file but no need to run: mvn package -DskipTests 
+if we dont want to compile the test and dont want test classes folder in target folder compiling test cases :mvn package -Dmaven.test.skip=true
+if we want to run the artifact :java -jar Target/spring-petclinic 1.0-snapshot.jar
+
+
+
+
+### we can customize our local repository by configuring local repo with out customised name in settings.xml instaead of .m2 folder
+### if we want to change the name of jar file <finalName> we need to write in pom.xml
+### mvn install - copy the artifact i.e,jar file created in target folder into local repo i.e,.m2 folder
+###mvn deploy-copy the artifact i.e,jar file created in target folder into local repo and remote repo
+%%%inorder to write profiles go to reslurces-applications.yaml
+
+
+
+
+
+
+
+
+
+
+    
